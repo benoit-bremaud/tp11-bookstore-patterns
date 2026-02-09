@@ -1,7 +1,7 @@
 package tp11.strategy;
 
 import tp11.Commande;
-import tp11.dto.LivreDTO;
+import tp11.Livre;
 
 import java.util.List;
 
@@ -17,13 +17,15 @@ public class FraisPortMondialRelayStrategy implements FraisPortStrategy {
 
     @Override
     public double calculerFraisPort() {
-        List<LivreDTO> livres = contexte.toDTO().getLivres();
+        List<Livre> livres = contexte.getLoadedLivres();
+        if (livres.isEmpty() && contexte.hasLivreIds()) {
+            throw new IllegalStateException("Books must be loaded before shipping fee calculation");
+        }
+
         double totalWeight = 0.0;
 
-        if (livres != null) {
-            for (LivreDTO livre : livres) {
-                totalWeight += livre.getPoids();
-            }
+        for (Livre livre : livres) {
+            totalWeight += livre.getPoids();
         }
 
         if (totalWeight <= 3.0) {
