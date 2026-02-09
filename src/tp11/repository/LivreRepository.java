@@ -5,10 +5,10 @@ import java.util.List;
 
 /************************************************************
  * Pattern Repository :
- * On définit ici notre repository comme un dépôt permettant de réaliser a minima les actions suivantes sur une collection de Livre :
- * - trouver un livre d'après son id
- * - renvoyer l'intégralité de la collection
- * - ajouter un nouveau livre au dépôt
+ * On dÃ©finit ici notre repository comme un dÃ©pÃ´t permettant de rÃ©aliser a minima les actions suivantes sur une collection de Livre :
+ * - trouver un livre d'aprÃ¨s son id
+ * - renvoyer l'intÃ©gralitÃ© de la collection
+ * - ajouter un nouveau livre au dÃ©pÃ´t
  */
 public interface LivreRepository {
     Livre findById(int id);

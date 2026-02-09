@@ -1,10 +1,10 @@
 package tp11.dto;
 
 /**
- * Les entités sont les objets complexes contenant de la
- * logique métier que l'on cherche à transformer à DTO
+ * Les entitÃ©s sont les objets complexes contenant de la
+ * logique mÃ©tier que l'on cherche Ã  transformer Ã  DTO
  * pour des raisons de communication. Tout objet de ce genre
- * devra implémenter cette interface et proposer une méthode
+ * devra implÃ©menter cette interface et proposer une mÃ©thode
  * toDTO() renvoyant la "version DTO" de l'objet.
  */
 public interface Entity {

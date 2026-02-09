@@ -1,28 +1,36 @@
 package tp11.strategy;
 
 import tp11.Commande;
-import tp11.dto.LivreDTO;
+import tp11.Livre;
 
 import java.util.List;
 
-/*****
- * Stratégie correspondant au mode d'expédition : Mondial Relay
+/**
+ * Shipping strategy for Mondial Relay.
  */
 public class FraisPortMondialRelayStrategy implements FraisPortStrategy {
-    // TODO à vous de déterminer s'il y a besoin d'attributs
+    private final Commande contexte;
 
     public FraisPortMondialRelayStrategy(Commande contexte) {
-        // TODO
+        this.contexte = contexte;
     }
 
-    /***
-     * Regles de calcul :
-     * - si le poids total de la commande est inférieur ou égal à 3kg, fdp = 4€
-     * - au delà de 3kg, fdp = 8€
-     */
     @Override
     public double calculerFraisPort() {
-        // TODO Calcul basé sur le poids des livres
-        return 0 ;
+        List<Livre> livres = contexte.getLoadedLivres();
+        if (livres.isEmpty() && contexte.hasLivreIds()) {
+            throw new IllegalStateException("Books must be loaded before shipping fee calculation");
+        }
+
+        double totalWeight = 0.0;
+
+        for (Livre livre : livres) {
+            totalWeight += livre.getPoids();
+        }
+
+        if (totalWeight <= 3.0) {
+            return 4.0;
+        }
+        return 8.0;
     }
 }
