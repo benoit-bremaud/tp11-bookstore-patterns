@@ -56,6 +56,7 @@ public class Livre implements Entity {
         this.poids = poids;
     }
 
+    @Override
     public LivreDTO toDTO() {
         return new LivreDTO(id, titre, auteur, poids);
     }
