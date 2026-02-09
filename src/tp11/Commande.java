@@ -100,6 +100,18 @@ public class Commande implements Entity {
         }
         return livres;
     }
+
+    /**
+     * Returns the currently loaded books snapshot.
+     * This does not trigger repository loading.
+     */
+    public List<Livre> getLoadedLivres() {
+        return livres != null ? new ArrayList<>(livres) : new ArrayList<>();
+    }
+
+    public boolean hasLivreIds() {
+        return livreIds != null && !livreIds.isEmpty();
+    }
     // End lazy loading
 
 
@@ -118,6 +130,7 @@ public class Commande implements Entity {
         }
     }
 
+    @Override
     public CommandeDTO toDTO() {
         List<LivreDTO> livreDTOs = new ArrayList<>();
         if (livres != null) {
