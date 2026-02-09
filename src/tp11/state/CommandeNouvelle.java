@@ -8,6 +8,7 @@ import tp11.Commande;
 public class CommandeNouvelle implements CommandeState {
     @Override
     public void next(Commande commande) {
+        commande.setStatus("En cours");
         commande.setCurrentState(new CommandeEnCours());
     }
 }
