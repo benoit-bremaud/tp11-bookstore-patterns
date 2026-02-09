@@ -5,25 +5,33 @@ import tp11.dto.LivreDTO;
 
 import java.util.List;
 
-/*****
- * Stratégie correspondant au mode d'expédition : Colissimo
+/**
+ * Shipping strategy for Colissimo.
  */
 public class FraisPortColissimoStrategy implements FraisPortStrategy {
-    // TODO à vous de déterminer s'il y a besoin d'attributs
+    private final Commande contexte;
 
     public FraisPortColissimoStrategy(Commande contexte) {
-        // TODO
+        this.contexte = contexte;
     }
 
-    /***
-     * Regles de calcul :
-     * - si le poids total de la commande est inférieur ou égal à 1kg, fdp = 3€
-     * - si le poids total de la commande est compris entre 1kg et 3kg, fdp = 5€
-     * - au delà de 3kg, fdp = 15€
-     */
     @Override
     public double calculerFraisPort() {
-        // TODO Calcul basé sur le poids des livres
-        return 0 ;
+        List<LivreDTO> livres = contexte.toDTO().getLivres();
+        double totalWeight = 0.0;
+
+        if (livres != null) {
+            for (LivreDTO livre : livres) {
+                totalWeight += livre.getPoids();
+            }
+        }
+
+        if (totalWeight <= 1.0) {
+            return 3.0;
+        }
+        if (totalWeight <= 3.0) {
+            return 5.0;
+        }
+        return 15.0;
     }
 }

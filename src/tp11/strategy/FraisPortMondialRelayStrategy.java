@@ -5,24 +5,30 @@ import tp11.dto.LivreDTO;
 
 import java.util.List;
 
-/*****
- * Stratégie correspondant au mode d'expédition : Mondial Relay
+/**
+ * Shipping strategy for Mondial Relay.
  */
 public class FraisPortMondialRelayStrategy implements FraisPortStrategy {
-    // TODO à vous de déterminer s'il y a besoin d'attributs
+    private final Commande contexte;
 
     public FraisPortMondialRelayStrategy(Commande contexte) {
-        // TODO
+        this.contexte = contexte;
     }
 
-    /***
-     * Regles de calcul :
-     * - si le poids total de la commande est inférieur ou égal à 3kg, fdp = 4€
-     * - au delà de 3kg, fdp = 8€
-     */
     @Override
     public double calculerFraisPort() {
-        // TODO Calcul basé sur le poids des livres
-        return 0 ;
+        List<LivreDTO> livres = contexte.toDTO().getLivres();
+        double totalWeight = 0.0;
+
+        if (livres != null) {
+            for (LivreDTO livre : livres) {
+                totalWeight += livre.getPoids();
+            }
+        }
+
+        if (totalWeight <= 3.0) {
+            return 4.0;
+        }
+        return 8.0;
     }
 }
