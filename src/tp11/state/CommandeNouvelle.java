@@ -1,10 +1,13 @@
 package tp11.state;
 
+import tp11.Commande;
 
 /**
- * Etat représentant la commande nouvellement créée.
- * Son état suivant est : En cours
+ * State representing a newly created order.
  */
 public class CommandeNouvelle implements CommandeState {
-    // TODO à vous d'écrire ce qu'il faut
+    @Override
+    public void next(Commande commande) {
+        commande.setCurrentState(new CommandeEnCours());
+    }
 }

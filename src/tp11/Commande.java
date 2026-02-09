@@ -2,63 +2,136 @@ package tp11;
 
 import tp11.dto.CommandeDTO;
 import tp11.dto.Entity;
+import tp11.dto.LivreDTO;
 import tp11.repository.LivreRepository;
+import tp11.state.CommandeEnCours;
 import tp11.state.CommandeState;
 import tp11.strategy.FraisPortStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/******************************************************************
- * Il s'agit d'une entité (voir pattern DTO), autrement dit
- * un objet complexe embarquant de la logique métier.
- * Cet objet propose une méthode toDTO() qui fournira la version légère
- * de cet objet, afin de faciliter les communications.
- *********************************************************************/
+/**
+ * Domain entity carrying business logic for an order.
+ * It also supports conversion to a lightweight DTO.
+ */
 public class Commande implements Entity {
-    // Liste des attributs : interdiction d'en ajouter/retirer
+    // Required attributes from the exercise skeleton.
     private int id;
     private Utilisateur utilisateur;
     private String status;
-    private CommandeState currentState = null ; // état actuel de la commande
+    private CommandeState currentState = null ; // current order state
     private double fraisDePort ;
 
-    // TODO à vous d'écrire les getters/setters, le(s) constructeur(s) et tout ce dont vous aurez besoin notamment pour le lazy loading
-
-
-    // Attributs liés au LazyLoading
+    // Lazy-loading fields
     private List<Integer> livreIds = new ArrayList<>();
-    private transient List<Livre> livres; // Chargé à la demande
+    private transient List<Livre> livres; // Loaded on demand
+
+    public Commande() {
+        this.status = "Commande créée";
+        this.currentState = new CommandeEnCours();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public CommandeState getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(CommandeState currentState) {
+        this.currentState = currentState;
+    }
+
+    public double getFraisDePort() {
+        return fraisDePort;
+    }
+
+    public void setFraisDePort(double fraisDePort) {
+        this.fraisDePort = fraisDePort;
+    }
+
+    public List<Integer> getLivreIds() {
+        return livreIds;
+    }
+
+    public void setLivreIds(List<Integer> livreIds) {
+        this.livreIds = livreIds;
+        this.livres = null;
+    }
 
     /**
-     * Dans cette implémentation, addLivreId() ajoute simplement l'ID d'un livre à la liste livreIds. Lorsque getLivres()
-     * est appelé, il utilise cette liste pour charger les livres correspondants depuis le LivreRepository, en implémentant ainsi le lazy loading.
-     * Les livres sont chargés uniquement lors de la première invocation de getLivres(), et les appels ultérieurs retournent la liste déjà chargée.
+     * Adds only book ids first, then resolves real book objects on first getLivres(...) call.
+     * Subsequent calls reuse the cached loaded list.
      */
     public void addLivreId(int livreId) {
-        // TODO à coder
+        this.livreIds.add(livreId);
+        this.livres = null;
     }
+
     public List<Livre> getLivres(LivreRepository repo) {
-        // TODO à coder
-        return null;
+        if (livres == null) {
+            livres = livreIds.stream()
+                    .map(repo::findById)
+                    .filter(livre -> livre != null)
+                    .collect(Collectors.toList());
+        }
+        return livres;
     }
-    // Fin Lazyloading
+    // End lazy loading
 
 
-    // Pattern Strategy
+    // Strategy pattern
     public double calculerFraisDePort(FraisPortStrategy strategy)
     {
-        // TODO à coder
-         return 0 ;
+        this.fraisDePort = strategy.calculerFraisPort();
+        return this.fraisDePort;
     }
 
-    // Pattern State
+    // State pattern
     public void etatSuivant()
     {
-        // TODO à coder
+        if (currentState != null) {
+            currentState.next(this);
+        }
     }
+
     public CommandeDTO toDTO() {
-        // TODO à coder
-        return null;
+        List<LivreDTO> livreDTOs = new ArrayList<>();
+        if (livres != null) {
+            livreDTOs = livres.stream()
+                    .map(Livre::toDTO)
+                    .collect(Collectors.toList());
+        }
+
+        return new CommandeDTO(
+                id,
+                livreDTOs,
+                utilisateur != null ? utilisateur.toDTO() : null,
+                status,
+                fraisDePort
+        );
     }
 }
